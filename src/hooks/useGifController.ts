@@ -33,6 +33,7 @@ type GifControllerResolved = {
   playing: boolean
   play: () => void
   pause: () => void
+  restart: () => void
   renderFrame: (frame: number) => void
   renderNextFrame: () => void
   renderPreviousFrame: () => void
@@ -140,6 +141,7 @@ export function useGifController(url: string, canvas: RefObject<HTMLCanvasElemen
     playing,
     play,
     pause,
+    restart,
     frameIndex,
     renderFrame,
     renderNextFrame,
@@ -166,6 +168,11 @@ export function useGifController(url: string, canvas: RefObject<HTMLCanvasElemen
 
   function pause() {
     setPlaying(false)
+  }
+
+  function restart() {
+    frameIndex.current = 0
+    setPlaying(true)
   }
 
   function renderFrame(frameIndex: number) {

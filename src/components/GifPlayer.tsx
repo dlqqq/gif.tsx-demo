@@ -13,7 +13,7 @@ export function GifPlayer(): JSX.Element | null {
     return null
   }
 
-  const { playing, play, pause, renderNextFrame, renderPreviousFrame, width, height } = gifController
+  const { playing, play, pause, restart, renderNextFrame, renderPreviousFrame, width, height } = gifController
 
   return (
     <div>
@@ -21,7 +21,8 @@ export function GifPlayer(): JSX.Element | null {
       <div style={{ display: 'flex', gap: 16, justifyContent: 'space-around' }}>
         <button onClick={renderPreviousFrame}>Previous</button>
         {playing ? <button onClick={pause}>Pause</button> : <button onClick={play}>Play</button>}
-        <button onClick={renderNextFrame}>next</button>
+        <button onClick={restart}>Restart</button>
+        <button onClick={renderNextFrame}>Next</button>
       </div>
       <div>
         <p>Width: {width}</p>
