@@ -13,16 +13,19 @@ export function GifPlayer(): JSX.Element | null {
     return null
   }
 
-  const { play, pause, renderNextFrame, renderPreviousFrame, renderFrame } = gifController
+  const { playing, play, pause, renderNextFrame, renderPreviousFrame, width, height } = gifController
 
   return (
     <div>
       <canvas {...gifController.canvasProps} ref={canvasRef} />
-      <div>
+      <div style={{ display: 'flex', gap: 16, justifyContent: 'space-around' }}>
         <button onClick={renderPreviousFrame}>Previous</button>
-        <button onClick={play}>Play</button>
-        <button onClick={pause}>Pause</button>
+        {playing ? <button onClick={pause}>Pause</button> : <button onClick={play}>Play</button>}
         <button onClick={renderNextFrame}>next</button>
+      </div>
+      <div>
+        <p>Width: {width}</p>
+        <p>Height: {height}</p>
       </div>
     </div>
   )

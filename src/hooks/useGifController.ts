@@ -36,6 +36,8 @@ type GifControllerResolved = {
   renderFrame: (frame: number) => void
   renderNextFrame: () => void
   renderPreviousFrame: () => void
+  width: number
+  height: number
 }
 
 type GifController = GifControllerLoading | GifControllerResolved | GifControllerError
@@ -129,8 +131,10 @@ export function useGifController(url: string, canvas: RefObject<HTMLCanvasElemen
   if (state.error === true)
     return { canvasProps: { hidden: true }, loading: false, error: true, errorMessage: state.errorMessage }
 
+  const { width, height } = state.gifReader
+
   return {
-    canvasProps: { width: state.gifReader.width, height: state.gifReader.height },
+    canvasProps: { width, height },
     loading: false,
     error: false,
     playing,
@@ -140,6 +144,8 @@ export function useGifController(url: string, canvas: RefObject<HTMLCanvasElemen
     renderFrame,
     renderNextFrame,
     renderPreviousFrame,
+    width,
+    height,
   }
 
   function play() {
