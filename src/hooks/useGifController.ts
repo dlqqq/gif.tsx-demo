@@ -43,7 +43,11 @@ type GifControllerResolved = {
 
 type GifController = GifControllerLoading | GifControllerResolved | GifControllerError
 
-export function useGifController(url: string, canvas: RefObject<HTMLCanvasElement | null>): GifController {
+export function useGifController(
+  url: string,
+  canvas: RefObject<HTMLCanvasElement | null>,
+  autoplay = false,
+): GifController {
   type LoadingState = {
     loading: true
     error: false
@@ -70,6 +74,7 @@ export function useGifController(url: string, canvas: RefObject<HTMLCanvasElemen
   // are only defined when `loading === true`.
   const [state, setState] = useState<State>({ loading: true, error: false })
   const [shouldUpdate, setShouldUpdate] = useState(false)
+  const [canvasAccessible, setCanvasAccessible] = useState(false)
   const frameIndex = useRef(-1)
 
   // state variable returned by hook
@@ -100,14 +105,29 @@ export function useGifController(url: string, canvas: RefObject<HTMLCanvasElemen
       setShouldUpdate(true)
     }
     loadGif()
+    // only run this effect on initial render and when URL changes.
+    // eslint-disable-next-line
   }, [url])
 
-  // update if shouldUpdate gets set to true, i.e. on initial render
+  // update if shouldUpdate gets set to true
   useEffect(() => {
     if (shouldUpdate) {
       setShouldUpdate(false)
+    } else if (canvas.current !== null) {
+      setCanvasAccessible(true)
     }
-  }, [shouldUpdate])
+  }, [canvas, shouldUpdate])
+
+  // if canvasAccessible is set to true, render first frame and then autoplay if
+  // specified in hook arguments
+  useEffect(() => {
+    if (canvasAccessible && frameIndex.current === -1) {
+      renderNextFrame()
+      autoplay && setPlaying(true)
+    }
+    // ignore renderNextFrame as it is referentially unstable
+    // eslint-disable-next-line
+  }, [canvasAccessible])
 
   useEffect(() => {
     if (playing) {
@@ -119,13 +139,6 @@ export function useGifController(url: string, canvas: RefObject<HTMLCanvasElemen
     // ignore _iterateRenderLoop() as it is referentially unstable
     // eslint-disable-next-line
   }, [playing])
-
-  // load first frame if not initialized
-  useEffect(() => {
-    if (!shouldUpdate && frameIndex.current === -1) renderNextFrame()
-    // ignore renderNextFrame as it is referentially unstable
-    // eslint-disable-next-line
-  }, [frameIndex, shouldUpdate])
 
   if (state.loading === true || !canvas) return { canvasProps: { hidden: true }, loading: true, error: false }
 

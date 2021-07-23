@@ -3,7 +3,7 @@ import { useGifController } from '../hooks/useGifController'
 
 export function GifPlayer(): JSX.Element | null {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const gifController = useGifController('/cradle.gif', canvasRef)
+  const gifController = useGifController('/cradle.gif', canvasRef, true)
 
   if (gifController.loading) {
     return null
